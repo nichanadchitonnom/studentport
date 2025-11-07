@@ -1,0 +1,70 @@
+/* ตั้งฟอนต์และพื้นหลัง */
+.role-page {
+  background-color: #ffc1cc;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: "sans-serif";
+}
+
+/* หัวข้อใหญ่ */
+.role-page h2 {
+  font-family: "Poppins";
+  font-size: 65px;
+  font-weight: 700;
+  margin-bottom: 85px;
+  color: #222;
+}
+
+/* วางกล่อง */
+.role-options {
+  display: flex;
+  gap: 70px;
+}
+
+/* กล่องแต่ละใบ */
+.role-card {
+  background: white;
+  border-radius: 25px;
+  padding: 70px 85px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* เอฟเฟกต์ hover */
+.role-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* ส่วนอีโมจิ */
+.role-card .emoji {
+  font-size: 75px;      /* ✅ ขยายขนาดอีโมจิ */
+  margin-bottom: 50px;  /* ✅ เว้นช่องห่างกับข้อความ */
+}
+
+/* ส่วนข้อความในกล่อง */
+.role-card div:last-child {
+  font-size: 30px;      /* ✅ ขยายตัวอักษร */
+  font-weight: 500;
+  color: #3a3a3a;
+}
+
+.home-icon {
+  position: absolute;
+  bottom: 25px;
+  left: 25px;
+  width: 45px;
+  height: 45px;
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+.home-icon:hover {
+  transform: scale(1.1);
+}
