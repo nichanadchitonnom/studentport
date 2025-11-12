@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import SidebarRecru from "../Student/SidebarStu";      
+import SidebarStu from "../Student/SidebarStu";      
 import ProjectCard from "../ProjectCard";         // ปรับ path ให้ตรงตำแหน่งไฟล์จริง
 
 const BASE = "http://localhost:3000"; // CRA proxy
@@ -61,7 +61,7 @@ export default function HomeStudent() {
 
   return (
     <div className="flex role-student">
-      <SidebarRecru />
+      <SidebarStu />
 
       <main className="main-content" style={{ marginLeft: 270, padding: 20, width: "100%" }}>
         <div className="top-bar" style={{ display: "flex", gap: 12, marginBottom: 12 }}>
