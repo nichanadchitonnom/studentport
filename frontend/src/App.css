@@ -213,3 +213,19 @@ body { font-family: "Poppins", sans-serif; background: #fff8dc; color: #222; }
 }
 .btn-approve{ background:#00c853; color:#fff; } .btn-approve:hover{ background:#009c3b; }
 .btn-reject { background:#f44336; color:#fff; } .btn-reject:hover { background:#c62828; }
+.btn-neutral {
+  background: #e5e7eb;
+  color: #111;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  font-family: sans-serif;
+}
+
+.btn-neutral:hover {
+  background: #d1d5db;
+}
+
