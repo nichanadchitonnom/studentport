@@ -49,7 +49,7 @@ export default function StudentResubmit() {
           year: String(data.year || ""),
           category: data.category || "",
           description: data.desc || "",
-          files: Array.isArray(data.files) ? data.files : [],
+          files: (data.files || []).map(f => ({ file: null, url: f.replace(/\\/g, "/") })),
         });
 
         if (data.cover_img) {
@@ -137,7 +137,7 @@ export default function StudentResubmit() {
       >
         {/* ปุ่มปิด */}
         <button
-          onClick={() => navigate("/student/home")}
+          onClick={() => navigate("/student/status")}
           style={{
             position: "absolute",
             top: 20,
@@ -326,19 +326,19 @@ export default function StudentResubmit() {
           </div>
 
           {/* Submit */}
-          <div style={{ display: "flex", gap: 16, marginTop: 8 }}>
+          <div style={{ display: "flex", justifyContent: "center", marginTop: 8 }}>
             <button
               type="submit"
               disabled={loading}
               style={{
-                flex: 1,
-                padding: 12,
-                borderRadius: 8,
-                fontSize: 16,
-                border: "1px solid #5b8db8",
-                background: "#5b8db8",
-                color: "#fff",
-                cursor: "pointer",
+                padding: "12px 24px",   // กว้างตามเนื้อหา
+      borderRadius: 8,
+      fontSize: 16,
+      border: "1px solid #5b8db8",
+      background: "#5b8db8",
+      color: "#fff",
+      cursor: "pointer",
+      display: "inline-block",
               }}
             >
               {loading ? "Resubmitting..." : "Resubmit"}
