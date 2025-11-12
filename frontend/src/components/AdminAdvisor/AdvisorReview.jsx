@@ -32,7 +32,7 @@ export default function AdvisorReview() {
   const onApprove = async () => {
   try {
     await reviewAdvisor(id, "approve", {}, token);
-    navigate("/advisor/verify");
+    navigate("/advisor/veri-portfolio");
   } catch (e) {
     setError(e.message || "Approve ล้มเหลว");
   }
@@ -47,8 +47,8 @@ export default function AdvisorReview() {
   }
   try {
     await reviewAdvisor(id, "reject", { feedback: feedback.trim() }, token);
-    // ✅ ถ้า reject สำเร็จ → navigate ไป /advisor/verify
-    navigate("/advisor/verify");
+    // ✅ ถ้า reject สำเร็จ → navigate ไป /advisor/veri-portfolio
+    navigate("/advisor/veri-portfolio");
   } catch (e) {
     // ❌ ถ้า server error → แสดง error บนหน้าเดิม
     setError(e.message || "Reject ล้มเหลว");
@@ -71,7 +71,7 @@ export default function AdvisorReview() {
     }}>
       {/* ปุ่มปิด */}
       <button
-        onClick={() => navigate("/advisor/verify")}
+        onClick={() => navigate("/advisor/veri-portfolio")}
         style={{
           position: "absolute", top: 20, right: 20, border: "none",
           background: "transparent", fontSize: 50, fontWeight: "bold",
@@ -147,20 +147,45 @@ export default function AdvisorReview() {
 </div>
 
         {/* Files */}
-        <div style={{ marginBottom: 15 }}>
-          <label>Attached Files:</label>
-          {files.length === 0 ? (
-            <p>-</p>
-          ) : (
-            <ul style={{ paddingLeft: 20 }}>
-              {files.map((f, idx) => (
-                <li key={idx}>
-                  <a href={f?.url || "#"} target="_blank" rel="noreferrer">{fileName(f)}</a>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+<div style={{ marginBottom: 15 }}>
+  <label>Attached Files:</label>
+  {files.length === 0 ? (
+    <p>-</p>
+  ) : (
+    <ul style={{ paddingLeft: 20 }}>
+      {files.map((f, idx) => {
+        // ✅ ถ้า f เป็น object ให้ดึง f.url หรือ f.path
+        let filePath =
+          typeof f === "string"
+            ? f
+            : f?.url || f?.path || "";
+
+        // ✅ ถ้าไฟล์ไม่มี host prefix ให้ต่อกับ localhost
+        if (filePath && !filePath.startsWith("http")) {
+          filePath = `http://localhost:3000/${filePath.replace(/\\/g, "/")}`;
+        }
+
+        const name = typeof f === "string"
+          ? f.split(/[\\/]/).pop()
+          : f?.name || f?.originalname || "file";
+
+        return (
+          <li key={idx}>
+            <a
+              href={filePath}
+              target="_blank"
+              rel="noreferrer"
+              style={{ color: "#007bff", textDecoration: "underline" }}
+            >
+              {name}
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  )}
+</div>
+
 
         {/* Description */}
         <div style={{ marginBottom: 15 }}>
