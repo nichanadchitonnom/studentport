@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-   
+
     role: {
       type: String,
       enum: ["Student", "AdvisorAdmin", "SuperAdmin", "Recruiter"],
@@ -39,6 +39,8 @@ const userSchema = new mongoose.Schema(
       enum: ["local", "google"],
       default: "local",
     },
+    otpCode: String,
+    otpExpiresAt: Date,
   },
   { timestamps: true }
 );
