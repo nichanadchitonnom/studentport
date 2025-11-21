@@ -74,3 +74,4 @@ export default function VerifyPortfolioAdvisor() {
       </div>
     </div>
   );
+}
