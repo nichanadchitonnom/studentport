@@ -159,7 +159,7 @@ router.post("/forgot-password", async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
     user.otpCode = otp;
-    user.otpExpiresAt = Date.now() + 5 * 60 * 1000; // 5 นาที
+    user.otpExpiresAt = Date.now() + 15 * 60 * 1000; // 15 นาที
     await user.save();
 
     const html = VERIFICATION_EMAIL_TEMPLATE.replace("{verificationCode}", otp);
@@ -173,56 +173,93 @@ router.post("/forgot-password", async (req, res) => {
   }
 });
 
-// ===============================
-// VERIFY OTP & RESET PASSWORD
-// ===============================
-// POST /auth/reset-password
-router.post("/reset-password", async (req, res) => {
+// ===========
+// VERIFY OTP
+// ===========
+// POST /auth/verify-otp
+router.post("/verify-otp", async (req, res) => {
   try {
-    const { email, otp, newPassword, confirmPassword } = req.body;
+    const { otp } = req.body;
+    if (!otp) return res.status(400).json({ message: "otp is required" });
 
-    if (!email || !otp || !newPassword || !confirmPassword) {
-      return res.status(400).json({
-        message: "email, otp, newPassword, confirmPassword are required",
-      });
-    }
+    // หา user จาก OTP ไม่ใช้ email แล้ว!
+    const user = await User.findOne({ otpCode: otp });
 
-    // ❗รหัสใหม่ต้องตรงกัน
-    if (newPassword !== confirmPassword) {
-      return res.status(400).json({ message: "Passwords do not match" });
-    }
+    if (!user) return res.status(400).json({ message: "Invalid OTP" });
+    if (user.otpExpiresAt < Date.now())
+      return res.status(400).json({ message: "OTP expired" });
 
-    const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ message: "User not found" });
+    // สร้าง resetToken (มีอายุ 5 นาที)
+    const resetToken = crypto.randomBytes(32).toString("hex");
 
-    // ตรวจ OTP
-    if (
-      !user.otpCode ||
-      user.otpCode !== otp ||
-      user.otpExpiresAt < Date.now()
-    ) {
-      return res.status(400).json({
-        message: "Invalid or expired OTP",
-      });
-    }
+    user.resetToken = resetToken;
+    user.resetTokenExpires = Date.now() + 15 * 60 * 1000;
 
-    // ตั้งรหัสใหม่
-    const hashed = await bcrypt.hash(newPassword, 10);
-    user.password = hashed;
-
+    // เคลียร์ OTP เพื่อความปลอดภัย
     user.otpCode = undefined;
     user.otpExpiresAt = undefined;
 
     await user.save();
 
-    // ส่งอีเมลแจ้งเตือนเปลี่ยนรหัสผ่านสำเร็จ
+    return res.json({
+      message: "OTP verified",
+      resetToken,
+    });
+  } catch (err) {
+    console.error("Verify OTP error:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ===============
+// RESET PASSWORD
+// ===============
+// POST /auth/reset-password
+router.post("/reset-password", async (req, res) => {
+  try {
+    const { resetToken, newPassword, confirmPassword } = req.body;
+
+    if (!resetToken || !newPassword || !confirmPassword) {
+      return res.status(400).json({
+        message: "resetToken, newPassword, confirmPassword are required",
+      });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({ message: "Passwords do not match" });
+    }
+
+    const user = await User.findOne({ resetToken });
+
+    if (!user) return res.status(400).json({ message: "Invalid reset token" });
+    if (user.resetTokenExpires < Date.now())
+      return res.status(400).json({ message: "Reset token expired" });
+
+    // ❗ตรวจว่ารหัสใหม่เหมือนของเก่ารึเปล่า
+    const isSame = await bcrypt.compare(newPassword, user.password);
+    if (isSame) {
+      return res.status(400).json({
+        message: "New password cannot be the same as the old password",
+      });
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    user.password = hashed;
+
+    // เคลียร์ token
+    user.resetToken = undefined;
+    user.resetTokenExpires = undefined;
+
+    await user.save();
+
+    // ส่งเมลแจ้ง reset สำเร็จ
     await sendEmail(
       PASSWORD_RESET_SUCCESS_TEMPLATE,
-      email,
+      user.email,
       "Password Reset Successful"
     );
 
-    return res.json({ message: "Password updated successfully" });
+    return res.json({ message: "Password reset successful" });
   } catch (err) {
     console.error("Reset password error:", err);
     return res.status(500).json({ message: "Server error" });
@@ -257,6 +294,14 @@ router.post("/change-password", async (req, res) => {
     const isMatch = await bcrypt.compare(oldPassword, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Old password is incorrect" });
+    }
+
+    // ❗ตรวจว่ารหัสใหม่ = รหัสเดิมไหม
+    const isSame = await bcrypt.compare(newPassword, user.password);
+    if (isSame) {
+      return res.status(400).json({
+        message: "New password cannot be the same as the old password",
+      });
     }
 
     // ตั้งรหัสใหม่

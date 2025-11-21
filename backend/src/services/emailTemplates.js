@@ -17,7 +17,7 @@ export const VERIFICATION_EMAIL_TEMPLATE = `
       <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #4CAF50;">{verificationCode}</span>
     </div>
     <p>Enter this code on the password reset page to continue.</p>
-    <p>This code will expire in 5 minutes for security reasons.</p>
+    <p>This code will expire in 15 minutes for security reasons.</p>
     <p>If you didn't request a password reset, you can safely ignore this email.</p>
     <p>Best regards,<br>StudentPort Team</p>
   </div>
