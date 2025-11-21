@@ -117,18 +117,6 @@ export default function VerifyAcc() {
                     >
                       View
                     </button>
-                    <button
-                      className="btn-approve"
-                      onClick={() => onApprove(acc._id)}
-                    >
-                      Approve
-                    </button>
-                    <button
-                      className="btn-reject"
-                      onClick={() => onReject(acc._id)}
-                    >
-                      Reject
-                    </button>
                   </td>
                 </tr>
               ))}
