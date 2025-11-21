@@ -99,12 +99,6 @@ export default function VerifyPortfolioSuper() {
                     <button className="btn-secondary" onClick={() => goDetail(p._id)}>
                       View
                     </button>
-                    <button className="btn-approve" onClick={() => onApprove(p._id)}>
-                      Approve
-                    </button>
-                    <button className="btn-reject" onClick={() => onReject(p._id)}>
-                      Reject
-                    </button>
                   </td>
                 </tr>
               ))}
