@@ -133,3 +133,12 @@
 .profile-contact-container {
     margin-bottom: 0;
 }
+.profile-header-bg {
+    color: black
+}
+.profile-info {
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-block;
+  font-family: sans-serif;
+}
