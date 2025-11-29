@@ -36,7 +36,7 @@ import "./App.css";
 
 export default function App() {
   return (
-    <Router basename={/regis/}>
+    <Router basename="/regis/">
     <Routes>
       {/* default */}
       <Route path="/" element={<Navigate to="/login" replace />} />
