@@ -36,7 +36,6 @@ import "./App.css";
 
 export default function App() {
   return (
-    <Router basename="/regis/">
     <Routes>
       {/* default */}
       <Route path="/" element={<Navigate to="/login" replace />} />
@@ -81,6 +80,5 @@ export default function App() {
       {/* 404 */}
       <Route path="*" element={<div>404 - Page Not Found</div>} />
     </Routes>
-    </Router>
   );
 }
