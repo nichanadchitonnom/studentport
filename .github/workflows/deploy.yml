@@ -33,6 +33,10 @@ jobs:
         env:
           CI: false
 
+      - name: Create 404.html for React Router
+        working-directory: frontend/build
+        run: cp index.html 404.html
+
       - name: Upload build
         uses: actions/upload-pages-artifact@v3
         with:
