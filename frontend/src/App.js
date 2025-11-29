@@ -1,5 +1,5 @@
 // src/App.jsx
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route,Router, Navigate } from "react-router-dom";
 
 // Auth Pages
 import Login from "./pages/Login";
@@ -36,6 +36,7 @@ import "./App.css";
 
 export default function App() {
   return (
+    <Router basename={/regis/}>
     <Routes>
       {/* default */}
       <Route path="/" element={<Navigate to="/login" replace />} />
@@ -80,5 +81,6 @@ export default function App() {
       {/* 404 */}
       <Route path="*" element={<div>404 - Page Not Found</div>} />
     </Routes>
+    </Router>
   );
 }
