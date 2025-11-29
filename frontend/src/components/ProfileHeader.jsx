@@ -15,10 +15,35 @@ const ProfileHeader = ({ name, university, contact, showEdit, onClickEdit, onCli
 
     const handleSave = () => {
         alert('Saving changes...'); 
-        
         if (onClickSave) {
             onClickSave(); 
         }
+    };
+
+    // -----------------------------
+    // Avatar แสดงตัวอักษรตัวแรกของ name
+    // -----------------------------
+    const renderAvatar = () => {
+        const letter = name && name.length > 0 ? name[0].toUpperCase() : "?";
+        return (
+            <div
+                className="profile-image-container"
+                style={{
+                    width: 60,
+                    height: 60,
+                    borderRadius: "50%",
+                    backgroundColor: "#ffffffff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "1.5rem",
+                    color: "black",
+                    fontWeight: "bold",
+                }}
+            >
+                {letter}
+            </div>
+        );
     };
 
     return (
@@ -26,9 +51,7 @@ const ProfileHeader = ({ name, university, contact, showEdit, onClickEdit, onCli
             
             {/* 1. ส่วน Avatar และ ปุ่ม Edit/Save */}
             <div className="avatar-wrapper">
-                <div className="profile-image-container">
-                    <span className="profile-initial">R</span>
-                </div>
+                {renderAvatar()}
 
                 {/* 🚨 ปุ่ม Edit/Save แสดงผลตาม showControls */}
                 {showControls && (
@@ -54,7 +77,7 @@ const ProfileHeader = ({ name, university, contact, showEdit, onClickEdit, onCli
                 <div className="profile-field-container">
                     <span className="field-label">University :</span>
                     <input className="profile-field-input" value={university} readOnly={!isEditing} />
-                    {showControls && isEditing && <EditIcon />} {/* 🚨 แสดง EditIcon เมื่อ 'showControls' เป็นจริงเท่านั้น */}
+                    {showControls && isEditing && <EditIcon />}
                 </div>
 
                 {/* Contact Field */}
@@ -67,7 +90,6 @@ const ProfileHeader = ({ name, university, contact, showEdit, onClickEdit, onCli
                 {/* Google Drive Field */}
                 <div className="profile-field-container">
                     <span className="field-label">Google Drive :</span>
-                    {/* 🚨 ลบ placeholder ออกตามคำขอ */}
                     <input className="profile-field-input" value="" placeholder="" readOnly={!isEditing} /> 
                     {showControls && isEditing && <EditIcon />}
                 </div>

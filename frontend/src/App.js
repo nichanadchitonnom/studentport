@@ -47,7 +47,7 @@ export default function App() {
       <Route path="/register/recruiter" element={<RecruiterRegister />} />
       <Route path="/pending" element={<Pending />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/change-password/:token" element={<ChangePassword />} />
+      <Route path="/change-password" element={<ChangePassword />} />
 
       {/* Student */}
       <Route path="/student/home" element={<HomeStudent />} />

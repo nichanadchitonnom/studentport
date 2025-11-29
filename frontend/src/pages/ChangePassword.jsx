@@ -1,15 +1,50 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import logo from "../assets/studentport_logo.png";
 import "./ChangePassword.css";
 
 export default function ChangePassword() {
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const [email, setEmail] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [msg, setMsg] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const API = "http://localhost:3000/auth";
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Password changed successfully! (mock only)");
-    navigate("/login");
+    setMsg("");
+    setError("");
+
+    if (newPassword !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      await axios.post(`${API}/change-password`, {
+        email,
+        oldPassword,
+        newPassword,
+        confirmPassword,
+      });
+
+      setMsg("Password changed successfully! Redirecting...");
+      setTimeout(() => navigate("/login"), 1800);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to change password");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -18,17 +53,50 @@ export default function ChangePassword() {
         <img src={logo} alt="StudentPort Logo" className="change-logo" />
         <div className="title">StudentPort.com</div>
 
-        <form onSubmit={handleSubmit}>
-          <input type="email" placeholder="email" required />
-          <input type="password" placeholder="new password" required />
-          <input type="password" placeholder="confirm password" required />
+        {error && <p className="error-text">{error}</p>}
+        {msg && <p className="success-text">{msg}</p>}
 
-          <button type="submit">Submit</button>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="email"
+            placeholder="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+
+          <input
+            type="password"
+            placeholder="old password"
+            required
+            value={oldPassword}
+            onChange={(e) => setOldPassword(e.target.value)}
+          />
+
+          <input
+            type="password"
+            placeholder="new password"
+            required
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+
+          <input
+            type="password"
+            placeholder="confirm password"
+            required
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+
+          <button type="submit" disabled={loading}>
+            {loading ? "Updating..." : "Submit"}
+          </button>
         </form>
 
-        <a className="back-link" href="/login">
+        <p className="back-link" onClick={() => navigate("/login")}>
           Go To Login
-        </a>
+        </p>
       </div>
     </div>
   );

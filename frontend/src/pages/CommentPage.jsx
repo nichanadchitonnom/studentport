@@ -9,7 +9,9 @@ function CommentBlock({ author, role, text, initial }) {
   return (
     <div className="comment-block">
       <div className="comment-header">
-        <div className="author-initial">{initial || (author?.[0] || "U")}</div>
+        <div className="author-initial">
+          {initial || (author?.[0] || "U")}
+        </div>
         <div className="author-info">
           <span className="author-name">{author}</span>
           <span className="author-role">&lt;{role}&gt;</span>
@@ -21,7 +23,7 @@ function CommentBlock({ author, role, text, initial }) {
 }
 
 export default function CommentPage() {
-  const { projectId } = useParams();               // path: /project/:projectId/comments
+  const { projectId } = useParams(); // path: /project/:projectId/comments
   const navigate = useNavigate();
 
   const [loading, setLoading]   = useState(true);
@@ -33,6 +35,8 @@ export default function CommentPage() {
   const MAX_LEN = 300;
 
   async function fetchDetail() {
+    if (!projectId) return;
+
     setLoading(true);
     try {
       const token = localStorage.getItem("token") || "";
@@ -41,7 +45,6 @@ export default function CommentPage() {
       });
 
       if (res.status === 401) {
-        // ต้องล็อกอินก่อนถึงดู internal ได้
         navigate("/login");
         return;
       }
@@ -52,15 +55,41 @@ export default function CommentPage() {
 
       const data = await res.json();
 
-      // map ฟิลด์พื้นฐานให้ UI ใช้งานง่าย
-      const images =
+      // ==== ดึง path รูปจากหลายฟิลด์ ====
+      const rawImages =
         (Array.isArray(data.images) && data.images.length && data.images) ||
         (Array.isArray(data.files) &&
-          data.files.filter((p) => /\.(png|jpe?g|gif|webp)$/i.test(String(p)))) ||
-        (data.cover_img ? [data.cover_img] : []);
+          data.files.filter((p) =>
+            /\.(png|jpe?g|gif|webp)$/i.test(String(p))
+          )) ||
+        (data.cover_img ? [data.cover_img] : []) ||
+        [];
 
-      const norm = (x) =>
-        x?.startsWith("http") ? x : `${API_BASE}${x?.startsWith("/") ? "" : "/"}${x || ""}`;
+      // ==== ปรับ path ให้ browser ใช้ได้ ====
+      const norm = (x) => {
+        if (!x) return "";
+        let url = String(x).trim();
+
+        // แก้ backslash -> forward slash
+        url = url.replace(/\\/g, "/");
+
+        // ถ้าเป็น URL เต็มอยู่แล้ว ก็ใช้เลย
+        if (url.startsWith("http://") || url.startsWith("https://")) {
+          return url;
+        }
+
+        // ให้ path ขึ้นต้นด้วย /
+        if (!url.startsWith("/")) {
+          url = "/" + url;
+        }
+
+        // ต่อกับ API_BASE (ให้ตรงกับที่ใช้ใน HomeStudent)
+        return `${API_BASE}${url}`;
+      };
+
+      const imageUrls = rawImages.map(norm);
+      console.log("CommentPage images from API:", rawImages);
+      console.log("CommentPage normalized images:", imageUrls);
 
       setProject({
         id: data._id || data.id || projectId,
@@ -68,10 +97,9 @@ export default function CommentPage() {
         name: data.owner?.displayName || data.name || "-",
         university: data.owner?.university || data.university || "-",
         description: data.description || data.desc || "-",
-        images: images.map(norm),
+        images: imageUrls,
       });
 
-      // ถ้าหลังบ้านแนบ comments มากับ detail ก็อ่านจาก data.comments
       const list = Array.isArray(data.comments) ? data.comments : [];
       setComments(
         list.map((c, i) => ({
@@ -79,7 +107,9 @@ export default function CommentPage() {
           author: c.user?.displayName || c.author || "Unknown",
           role: c.user?.role || c.role || "guest",
           text: c.text || "",
-          initial: (c.user?.displayName || c.author || "U").slice(0,1).toUpperCase(),
+          initial: (c.user?.displayName || c.author || "U")
+            .slice(0,1)
+            .toUpperCase(),
         }))
       );
     } catch (e) {
@@ -89,7 +119,10 @@ export default function CommentPage() {
     }
   }
 
-  useEffect(() => { fetchDetail(); /* eslint-disable-next-line */ }, [projectId]);
+  useEffect(() => {
+    fetchDetail();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId]);
 
   async function onPost(e) {
     e.preventDefault();
@@ -104,14 +137,17 @@ export default function CommentPage() {
         return;
       }
 
-      const res = await fetch(`${API_BASE}/api/portfolio/${projectId}/comment`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ text: newText.trim() }),
-      });
+      const res = await fetch(
+        `${API_BASE}/api/portfolio/${projectId}/comment`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ text: newText.trim() }),
+        }
+      );
 
       if (res.status === 401) {
         navigate("/login");
@@ -122,7 +158,6 @@ export default function CommentPage() {
         throw new Error(`Post failed (${res.status}). ${t.slice(0,120)}`);
       }
 
-      // โพสต์เสร็จ → รีเฟตช์ detail เพื่อให้คอมเมนต์ล่าสุดขึ้น
       await fetchDetail();
       setNewText("");
     } catch (err) {
@@ -132,15 +167,18 @@ export default function CommentPage() {
     }
   }
 
-  if (loading)     return <div className="loading-page">Loading…</div>;
-  if (!project)    return <div className="error-page">Project not found.</div>;
-  const total = project.images.length;
+  if (loading)  return <div className="loading-page">Loading…</div>;
+  if (!project) return <div className="error-page">Project not found.</div>;
+
+  const total = project.images?.length || 0;
 
   return (
     <div className="comment-page-container">
       <div className="header-row">
         <h2 className="page-title">{project.title}</h2>
-        <button className="back-button" onClick={() => navigate(-1)}>⬅️ Back</button>
+        <button className="back-button" onClick={() => navigate(-1)}>
+          ⬅️ Back
+        </button>
       </div>
 
       <div className="comment-page-grid">
@@ -148,10 +186,14 @@ export default function CommentPage() {
         <section className="project-display-section">
           <div className="image-viewer">
             <img
-              src={project.images[imgIndex] || "https://via.placeholder.com/900x520?text=No+Image"}
+              src={
+                project.images?.[imgIndex] ||
+                "https://via.placeholder.com/900x520?text=No+Image"
+              }
               alt={`Project Image ${imgIndex + 1}`}
               className="project-main-image"
             />
+
             {total > 1 && (
               <div className="image-pagination">
                 {project.images.map((_, i) => (
@@ -183,13 +225,26 @@ export default function CommentPage() {
           <form className="comment-form" onSubmit={onPost}>
             <textarea
               value={newText}
-              onChange={(e) => setNewText(e.target.value.slice(0, MAX_LEN))}
+              onChange={(e) =>
+                setNewText(e.target.value.slice(0, MAX_LEN))
+              }
               placeholder="Add your comment here..."
               rows={3}
             />
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <small style={{ opacity: 0.7 }}>{newText.length}/{MAX_LEN}</small>
-              <button type="submit" disabled={!newText.trim() || posting}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <small style={{ opacity: 0.7 }}>
+                {newText.length}/{MAX_LEN}
+              </small>
+              <button
+                type="submit"
+                disabled={!newText.trim() || posting}
+              >
                 {posting ? "Posting…" : "Post Comment"}
               </button>
             </div>

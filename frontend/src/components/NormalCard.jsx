@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./NormalCard.css";
+const FAIL_PATH = "/student/fail-status-error";
 
 export default function NormalCard({
   id, title, name, university, year, description, image, category,
@@ -9,6 +10,7 @@ export default function NormalCard({
   const statusLower = String(status || "").toLowerCase(); // draft/pending/in_process/approved/rejected
   const statusClass = statusLower.replace(/\s+/g, "");
   const isApproved = statusLower === "approved";
+  const isRejected = statusLower.includes("reject");
 
   const linkPath =
     statusLower === "draft"   ? `/student/edit/${id}` :
@@ -67,7 +69,20 @@ export default function NormalCard({
     </div>
   );
 
-  return isApproved ? (
-    <Link to={commentPath} className="card-link-wrapper">{body}</Link>
-  ) : ( body );
+return (
+    <div className="card-wrapper">
+        {isRejected ? (
+            <Link 
+                to={`${FAIL_PATH}/${id}`} 
+                className="card-link-wrapper"
+            >
+                {body}
+            </Link>
+        ) : (
+            <div className="card-display-wrapper">
+                {body}
+            </div>
+        )}
+    </div> 
+);
 }

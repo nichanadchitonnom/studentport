@@ -126,11 +126,23 @@ body { font-family: "Poppins", sans-serif; background: #fff8dc; color: #222; }
 .pill:hover { background: #a4a3a1; border: 1px solid #000; }
 
 /* ===== GRID & CARD ===== */
-.grid {
-  margin-left: 270px;
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(270px,1fr));
-  gap: 20px;
+.role-student .grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(260px, 1fr)); /* ลดขนาดขั้นต่ำ */
+  gap: 24px;
+  align-items: start;
+  padding: 10px 40px 40px;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
+.project-card {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;              /* สำคัญ: อย่าใช้ margin: 0 auto; */
+  box-sizing: border-box;
+}
+
 .card {
   background: #fff; border: 2px solid #808080; border-radius: 16px; padding: 14px;
   box-shadow: 0 6px 14px rgba(0,0,0,.08);
@@ -228,4 +240,5 @@ body { font-family: "Poppins", sans-serif; background: #fff8dc; color: #222; }
 .btn-neutral:hover {
   background: #d1d5db;
 }
+
 
