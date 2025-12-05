@@ -1,5 +1,5 @@
 // src/api/edit.js
-const BASE = "http://localhost:3000"; // ใช้ CRA proxy (setupProxy ชี้ไป :3000 อยู่แล้ว)
+const BASE = "https://regis-production-ca14.up.railway.app"; // ใช้ CRA proxy (setupProxy ชี้ไป :3000 อยู่แล้ว)
 
 export async function editPortfolio(id, formData, token) {
   if (!token) throw new Error("No token found");

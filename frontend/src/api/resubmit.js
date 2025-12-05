@@ -1,6 +1,5 @@
 // src/api/resubmit.js
-const BASE = "http://localhost:3000";
-
+const BASE = "https://regis-production-ca14.up.railway.app";
 /**
  * Resubmit portfolio
  * @param {string|number} id - Portfolio ID

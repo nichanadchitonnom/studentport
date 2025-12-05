@@ -1,7 +1,7 @@
 // front/src/api/portfolio-v2.js
 
 // --- นี่คือ "ตัวช่วย" ที่ Error ฟ้องหาครับ ---
-const BASE_URL = "http://localhost:3000"; // (ถ้า API อยู่ที่เดียวกับเว็บ ไม่ต้องใส่อะไร)
+const BASE_URL = "https://regis-production-ca14.up.railway.app";
 
 // --- นี่คือ "ตัวช่วย" ที่จะไปดึง Token มาให้ ---
 const getAuthHeader = () => {

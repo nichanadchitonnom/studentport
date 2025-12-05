@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getPortfolioForReview, reviewAdvisor } from "../../api/review";
 
+const BASE = "https://regis-production-ca14.up.railway.app";
+
 export default function AdvisorReview() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -162,7 +164,7 @@ export default function AdvisorReview() {
 
         // ✅ ถ้าไฟล์ไม่มี host prefix ให้ต่อกับ localhost
         if (filePath && !filePath.startsWith("http")) {
-          filePath = `http://localhost:3000/${filePath.replace(/\\/g, "/")}`;
+          filePath = `${BASE}/${filePath.replace(/^\/+/, "").replace(/\\/g, "/")}`;
         }
 
         const name = typeof f === "string"

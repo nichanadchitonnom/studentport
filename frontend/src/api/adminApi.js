@@ -1,5 +1,4 @@
-const BASE = "http://localhost:3000";
-
+const BASE = "https://regis-production-ca14.up.railway.app";
 // ✅ แนบ token ถ้ามี
 function authHeader() {
   const token = localStorage.getItem("token");

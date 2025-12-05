@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/studentport_logo.png";
 import "./Login.css";
 
+const BASE = "https://regis-production-ca14.up.railway.app";
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,7 +31,7 @@ export default function Login() {
     setErrors({});
 
     try {
-      const res = await fetch("http://127.0.0.1:3000/auth/login", {
+      const res = await fetch(`${BASE}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

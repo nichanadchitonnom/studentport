@@ -4,6 +4,8 @@ import "./UserApprovalDetail.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { getUserAdminView, approveUser, rejectUser } from "../../api/adminApi";
 
+const BASE = "https://regis-production-ca14.up.railway.app";
+
 export default function UserApprovalDetail() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -23,7 +25,7 @@ export default function UserApprovalDetail() {
           email: data.email || "",
           password: "********",
           cardUrl: data.studentCardUrl
-            ? `http://localhost:3000/${data.studentCardUrl.replace(/\\/g, "/")}`
+            ? `${BASE}/${data.studentCardUrl.replace(/\\/g, "/")}`
             : "",
           submittedAt: data.createdAt
             ? new Date(data.createdAt).toLocaleString()

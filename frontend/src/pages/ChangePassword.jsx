@@ -4,6 +4,9 @@ import axios from "axios";
 import logo from "../assets/studentport_logo.png";
 import "./ChangePassword.css";
 
+const BASE = "https://regis-production-ca14.up.railway.app";
+const API = `${BASE}/auth`;
+
 export default function ChangePassword() {
   const navigate = useNavigate();
 
@@ -15,8 +18,6 @@ export default function ChangePassword() {
   const [msg, setMsg] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const API = "http://localhost:3000/auth";
 
   const handleSubmit = async (e) => {
     e.preventDefault();

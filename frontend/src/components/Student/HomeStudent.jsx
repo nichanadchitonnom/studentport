@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import SidebarStu from "../Student/SidebarStu";
 import ProjectCard from "../ProjectCard";
 
-const BASE = "http://localhost:3000"; // 🎯 Base URL สำหรับ Backend (ใช้ใน Dev Proxy)
+const BASE = "https://regis-production-ca14.up.railway.app"; // 🎯 Base URL สำหรับ Backend (ใช้ใน Dev Proxy)
 
 const norm = (x) => {
   if (!x) return x;

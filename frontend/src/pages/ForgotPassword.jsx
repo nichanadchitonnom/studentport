@@ -4,6 +4,9 @@ import axios from "axios";
 import logo from "../assets/studentport_logo.png";
 import "./ForgotPassword.css";
 
+const BASE = "https://regis-production-ca14.up.railway.app";
+const API = `${BASE}/auth`;
+
 export default function ForgotPassword() {
   const navigate = useNavigate();
 
@@ -18,8 +21,6 @@ export default function ForgotPassword() {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
   const [error, setError] = useState("");
-
-  const API = "http://localhost:3000/auth";
 
   // -----------------------------
   // STEP 1: ส่ง email เพื่อขอ OTP

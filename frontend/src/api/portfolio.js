@@ -1,6 +1,5 @@
 // src/api/portfolio.js
-const BASE = "http://localhost:3000";
-
+const BASE = "https://regis-production-ca14.up.railway.app";
 /** สร้างพอร์ต (submit/draft ดูที่ body.submit) */
 export async function createPortfolio(formData, token) {
   const res = await fetch(`${BASE}/api/portfolio`, {

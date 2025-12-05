@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import SidebarRecru from "../Recruiter/SidebarRecru";       // ✅ sidebar ฝั่ง Recruiter
 import ProjectCard from "../ProjectCard";         // ปรับ path ให้ตรงตำแหน่งไฟล์จริง
 
-const BASE = "http://localhost:3000"; // 🎯 Base URL สำหรับ Backend (ใช้ใน Dev Proxy)
+const BASE = "https://regis-production-ca14.up.railway.app"; // 🎯 Base URL สำหรับ Backend (ใช้ใน Dev Proxy)
 
 const norm = (x) => {
   if (!x) return x;

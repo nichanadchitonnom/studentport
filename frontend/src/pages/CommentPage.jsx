@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./CommentPage.css";
 
-const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:3000";
+const BASE = "https://regis-production-ca14.up.railway.app";
 
 function CommentBlock({ author, role, text, initial }) {
   return (
@@ -40,7 +40,7 @@ export default function CommentPage() {
     setLoading(true);
     try {
       const token = localStorage.getItem("token") || "";
-      const res = await fetch(`${API_BASE}/api/portfolio/detail/${projectId}`, {
+      const res = await fetch(`${BASE}/api/portfolio/detail/${projectId}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
 
@@ -84,7 +84,7 @@ export default function CommentPage() {
         }
 
         // ต่อกับ API_BASE (ให้ตรงกับที่ใช้ใน HomeStudent)
-        return `${API_BASE}${url}`;
+        return `${BASE}${url}`;
       };
 
       const imageUrls = rawImages.map(norm);
@@ -138,7 +138,7 @@ export default function CommentPage() {
       }
 
       const res = await fetch(
-        `${API_BASE}/api/portfolio/${projectId}/comment`,
+        `${BASE}/api/portfolio/${projectId}/comment`,
         {
           method: "POST",
           headers: {

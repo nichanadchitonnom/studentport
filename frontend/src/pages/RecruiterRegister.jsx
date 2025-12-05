@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import "./RecruiterRegister.css";
 import homeIcon from "../assets/home_icon.png";
 
+const BASE = "https://regis-production-ca14.up.railway.app";
+
 export default function RecruiterRegister() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -64,7 +66,7 @@ export default function RecruiterRegister() {
       }
 
       // เรียก API backend
-      const res = await fetch("http://localhost:3000/auth/register", {
+      const res = await fetch(`${BASE}/auth/register`, {
         method: "POST",
         body: data,
       });

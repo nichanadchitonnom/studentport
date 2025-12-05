@@ -1,6 +1,5 @@
 // src/api/upload.js
-const BASE = "http://localhost:3000";
-
+const BASE = "https://regis-production-ca14.up.railway.app";
 export async function uploadPortfolio(formData, token) {
   try {
     const res = await fetch(`${BASE}/api/portfolio`, {

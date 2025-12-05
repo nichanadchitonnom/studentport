@@ -1,9 +1,9 @@
 // src/api/utils.js
 
-export const BASE_URL = "http://127.0.0.1:3000"; // 🚨 URL ฐานของ Backend
+export const BASE_URL = "https://regis-production-ca14.up.railway.app";
 
 export function getAuthHeader() {
-    const token = localStorage.getItem('authToken'); // ดึง Token จาก Local Storage
+    const token = localStorage.getItem("token"); 
     if (!token) {
         throw new Error("Authentication Failed: No token found. Please log in.");
     }

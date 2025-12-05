@@ -1,6 +1,6 @@
 // front/src/api/user.js
 
-const BASE_URL = "http://localhost:3000";;
+const BASE_URL = "https://regis-production-ca14.up.railway.app";
 
 const getAuthHeader = () => {
   const token = localStorage.getItem('token');
