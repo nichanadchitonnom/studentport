@@ -1,5 +1,6 @@
 // src/api/upload.js
 const BASE = "https://regis-production-ca14.up.railway.app";
+
 export async function uploadPortfolio(formData, token) {
   try {
     const res = await fetch(`${BASE}/api/portfolio`, {
@@ -8,17 +9,30 @@ export async function uploadPortfolio(formData, token) {
         ? {
             Authorization: `Bearer ${token}`,
           }
-        : undefined, // ถ้ามี token จะใส่ header ให้
-      body: formData, // Browser จะจัด multipart/form-data ให้เอง
+        : undefined,
+      body: formData,
     });
 
-    const data = await res.json(); // แปลง response เป็น JSON
+    // ตรวจ type ของ response
+    const contentType = res.headers.get("content-type") || "";
+
+    let data;
+    if (contentType.includes("application/json")) {
+      data = await res.json();
+    } else {
+      const text = await res.text();
+      console.error("Non-JSON response:", text);
+
+      throw new Error(
+        `Server error (${res.status}) – โปรดตรวจสอบ log ที่ Railway`
+      );
+    }
 
     if (!res.ok) {
       throw new Error(data.message || "Upload failed");
     }
 
-    return data; // { message, data } ที่ฝั่ง backend ส่งกลับมา
+    return data;
   } catch (err) {
     console.error("Upload error:", err);
     throw err;
