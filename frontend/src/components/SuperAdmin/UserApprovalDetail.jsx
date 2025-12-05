@@ -18,15 +18,27 @@ export default function UserApprovalDetail() {
     (async () => {
       try {
         const data = await getUserAdminView(id);
+
+        // ⭐ รวม field ที่เป็นไปได้ในการเก็บรูปบัตร
+        const rawCardPath =
+          data.studentCardUrl ||
+          data.employeeCardUrl ||
+          data.recruiterCardUrl ||
+          data.cardUrl ||
+          "";
+
         setUser({
           role: data.role,
           firstName: data.displayName ? data.displayName.split(" ")[0] : "",
           lastName: data.displayName ? data.displayName.split(" ")[1] || "" : "",
           email: data.email || "",
           password: "********",
-          cardUrl: data.studentCardUrl
-            ? `${BASE}/${data.studentCardUrl.replace(/\\/g, "/")}`
+
+          // ⭐ แปลง path เป็น URL พร้อมใช้งาน
+          cardUrl: rawCardPath
+            ? `${BASE}/${rawCardPath.replace(/\\/g, "/")}`
             : "",
+
           submittedAt: data.createdAt
             ? new Date(data.createdAt).toLocaleString()
             : "-",
@@ -80,7 +92,7 @@ export default function UserApprovalDetail() {
             {user.submittedAt}
           </div>
           <button className="back-link" onClick={() => navigate(-1)}>
-            ⬅️  Back
+            ⬅️ Back
           </button>
         </div>
       </div>
