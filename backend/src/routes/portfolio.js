@@ -6,7 +6,6 @@ import { upload } from "../middleware/upload.js";
 import multer from "multer";
 
 const router = express.Router();
-
 router.post(
   "/",
   auth,
@@ -89,12 +88,12 @@ router.post(
 
       // 🔸 ของเดิม (กำหนด URL ถ้ามีไฟล์)
       const coverImgUrl = req.files?.cover_img
-        ? `https://${req.get("host")}/${req.files.cover_img[0].path}`
+        ? `${req.protocol}://${req.get("host")}/${req.files.cover_img[0].path}`
         : undefined;
 
       const otherUrls = req.files?.portfolioFiles
         ? req.files.portfolioFiles.map(
-            (f) => `https://${req.get("host")}/${f.path}`
+            (f) => `${req.protocol}://${req.get("host")}/${f.path}`
           )
         : [];
 
@@ -449,21 +448,18 @@ router.put(
         const fs = await import("fs");
         if (p.cover_img) {
           const oldCoverPath = p.cover_img.replace(
-            `https://${req.get("host")}/`,
+            `${req.protocol}://${req.get("host")}/`,
             ""
           );
           if (fs.existsSync(oldCoverPath)) {
             try {
               fs.unlinkSync(oldCoverPath);
             } catch (e) {
-              console.warn(
-                "⚠️ Failed to delete old cover image:",
-                oldCoverPath
-              );
+              console.warn("⚠️ Failed to delete old cover image:", oldCoverPath);
             }
           }
         }
-        p.cover_img = `https://${req.get("host")}/${
+        p.cover_img = `${req.protocol}://${req.get("host")}/${
           req.files.cover_img[0].path
         }`;
       }
@@ -471,13 +467,13 @@ router.put(
       // ✅ ถ้ามี portfolioFiles ใหม่ → ลบไฟล์เก่าทั้งหมด แล้วใช้ไฟล์ใหม่แทน
       if (req.files?.portfolioFiles && req.files.portfolioFiles.length > 0) {
         const newFiles = req.files.portfolioFiles.map(
-          (f) => `https://${req.get("host")}/${f.path}`
+          (f) => `${req.protocol}://${req.get("host")}/${f.path}`
         );
         const fs = await import("fs");
         if (p.files && p.files.length > 0) {
           for (const oldPath of p.files) {
             const localPath = oldPath.replace(
-              `https://${req.get("host")}/`,
+              `${req.protocol}://${req.get("host")}/`,
               ""
             );
             if (fs.existsSync(localPath)) {
@@ -506,28 +502,26 @@ router.put(
         // 🔸 ลบ cover_img ถ้า user สั่ง removeCover
         if (
           (!req.files?.cover_img || req.files.cover_img.length === 0) &&
-          typeof p.cover_img !== "undefined"
+           typeof p.cover_img !== "undefined"
         ) {
           const fs = await import("fs");
           if (p.cover_img) {
             const oldCoverPath = p.cover_img.replace(
-              `https://${req.get("host")}/`,
+              `${req.protocol}://${req.get("host")}/`,
               ""
             );
             if (fs.existsSync(oldCoverPath)) {
               try {
                 fs.unlinkSync(oldCoverPath);
               } catch (e) {
-                console.warn(
-                  "⚠️ Failed to delete old cover image:",
-                  oldCoverPath
-                );
+                console.warn("⚠️ Failed to delete old cover image:", oldCoverPath);
               }
             }
           }
           p.cover_img = undefined;
         }
       }
+
 
       // 🔹 เพิ่มใหม่ → ตรวจเฉพาะตอนจะส่งกลับเป็น pending เท่านั้น
       if (!isDraft) {
@@ -556,6 +550,7 @@ router.put(
         });
       }
       p.status = isDraft ? "draft" : "pending";
+
 
       // 🔸 ของเดิม
       p.feedback = undefined;
@@ -631,5 +626,3 @@ router.post("/:id/comment", auth, async (req, res) => {
 });
 
 export default router;
-
-
