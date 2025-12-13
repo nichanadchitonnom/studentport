@@ -15,6 +15,7 @@ dotenv.config();
 await connectDB();
 
 const app = express();
+app.set("trust proxy", 1);
 app.use(express.json());
 
 // อนุญาตให้ frontend ติดต่อ backend ได้

@@ -7,85 +7,6 @@ import multer from "multer";
 
 const router = express.Router();
 
-/**
- * POST /api/portfolio
- * สร้าง portfolio ใหม่
- * ต้อง login ก่อน
- */
-
-// router.post("/", auth, upload.array("portfolioFiles", 11), async (req, res) => {
-//   try {
-//     const { title, university, year, category, desc, visibility, submit } =
-//       req.body;
-
-//     // ⛔ ถ้าดังนี้ขาดอย่างใดอย่างหนึ่ง → error
-//     if (!title || !university || !year || !category) {
-//       return res.status(400).json({
-//         message: "title, university, year, category are required",
-//       });
-//     }
-//     // ✅ ต้องมีอย่างน้อย 1 ไฟล์
-//     if (!req.files || req.files.length === 0) {
-//       return res.status(400).json({
-//         message: "At least 1 file is required (PDF, JPG, PNG ≤ 10MB)",
-//       });
-//     }
-//     // ✅ ตรวจปี
-//     const yearNum = Number(year);
-//     if (isNaN(yearNum) || yearNum < 2020 || yearNum > 2025) {
-//       return res
-//         .status(400)
-//         .json({ message: "Year must be between 2020-2025" });
-//     }
-
-//     // ✅ ตรวจ category
-//     const allowedCategories = [
-//       "AI",
-//       "ML",
-//       "BI",
-//       "QA",
-//       "UX/UI",
-//       "Database",
-//       "Software Engineering",
-//       "IOT",
-//       "Gaming",
-//       "Web Development",
-//       "Coding",
-//       "Data Science",
-//       "Hackathon",
-//       "Bigdata",
-//       "Data Analytics",
-//     ];
-//     if (!allowedCategories.includes(category)) {
-//       return res.status(400).json({ message: "Invalid category" });
-//     }
-
-//     // ✅ เก็บ path ไฟล์ทั้งหมดลง array
-//     const filePaths = req.files.map((f) => f.path);
-
-//     const status = submit === "true" ? "pending" : "draft";
-
-//     const portfolio = await Portfolio.create({
-//       owner: req.user.id,
-//       title,
-//       university,
-//       year,
-//       category,
-//       desc,
-//       files: filePaths, // ✅ บันทึก array ไฟล์
-//       visibility: visibility || "private",
-//       status,
-//     });
-
-//     return res.status(201).json({
-//       message: "Portfolio created",
-//       data: portfolio,
-//     });
-//   } catch (err) {
-//     console.error("Create portfolio error:", err);
-//     return res.status(500).json({ message: "Server error" });
-//   }
-// });
 router.post(
   "/",
   auth,
@@ -168,12 +89,12 @@ router.post(
 
       // 🔸 ของเดิม (กำหนด URL ถ้ามีไฟล์)
       const coverImgUrl = req.files?.cover_img
-        ? `${req.protocol}://${req.get("host")}/${req.files.cover_img[0].path}`
+        ? `https://${req.get("host")}/${req.files.cover_img[0].path}`
         : undefined;
 
       const otherUrls = req.files?.portfolioFiles
         ? req.files.portfolioFiles.map(
-            (f) => `${req.protocol}://${req.get("host")}/${f.path}`
+            (f) => `https://${req.get("host")}/${f.path}`
           )
         : [];
 
@@ -528,18 +449,21 @@ router.put(
         const fs = await import("fs");
         if (p.cover_img) {
           const oldCoverPath = p.cover_img.replace(
-            `${req.protocol}://${req.get("host")}/`,
+            `https://${req.get("host")}/`,
             ""
           );
           if (fs.existsSync(oldCoverPath)) {
             try {
               fs.unlinkSync(oldCoverPath);
             } catch (e) {
-              console.warn("⚠️ Failed to delete old cover image:", oldCoverPath);
+              console.warn(
+                "⚠️ Failed to delete old cover image:",
+                oldCoverPath
+              );
             }
           }
         }
-        p.cover_img = `${req.protocol}://${req.get("host")}/${
+        p.cover_img = `https://${req.get("host")}/${
           req.files.cover_img[0].path
         }`;
       }
@@ -547,13 +471,13 @@ router.put(
       // ✅ ถ้ามี portfolioFiles ใหม่ → ลบไฟล์เก่าทั้งหมด แล้วใช้ไฟล์ใหม่แทน
       if (req.files?.portfolioFiles && req.files.portfolioFiles.length > 0) {
         const newFiles = req.files.portfolioFiles.map(
-          (f) => `${req.protocol}://${req.get("host")}/${f.path}`
+          (f) => `https://${req.get("host")}/${f.path}`
         );
         const fs = await import("fs");
         if (p.files && p.files.length > 0) {
           for (const oldPath of p.files) {
             const localPath = oldPath.replace(
-              `${req.protocol}://${req.get("host")}/`,
+              `https://${req.get("host")}/`,
               ""
             );
             if (fs.existsSync(localPath)) {
@@ -582,26 +506,28 @@ router.put(
         // 🔸 ลบ cover_img ถ้า user สั่ง removeCover
         if (
           (!req.files?.cover_img || req.files.cover_img.length === 0) &&
-           typeof p.cover_img !== "undefined"
+          typeof p.cover_img !== "undefined"
         ) {
           const fs = await import("fs");
           if (p.cover_img) {
             const oldCoverPath = p.cover_img.replace(
-              `${req.protocol}://${req.get("host")}/`,
+              `https://${req.get("host")}/`,
               ""
             );
             if (fs.existsSync(oldCoverPath)) {
               try {
                 fs.unlinkSync(oldCoverPath);
               } catch (e) {
-                console.warn("⚠️ Failed to delete old cover image:", oldCoverPath);
+                console.warn(
+                  "⚠️ Failed to delete old cover image:",
+                  oldCoverPath
+                );
               }
             }
           }
           p.cover_img = undefined;
         }
       }
-
 
       // 🔹 เพิ่มใหม่ → ตรวจเฉพาะตอนจะส่งกลับเป็น pending เท่านั้น
       if (!isDraft) {
@@ -630,7 +556,6 @@ router.put(
         });
       }
       p.status = isDraft ? "draft" : "pending";
-
 
       // 🔸 ของเดิม
       p.feedback = undefined;
@@ -706,3 +631,5 @@ router.post("/:id/comment", auth, async (req, res) => {
 });
 
 export default router;
+
+
