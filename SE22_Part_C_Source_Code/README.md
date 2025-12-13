@@ -69,20 +69,50 @@ npm start
 
 **5. How to import DB data**
 
+โครงการนี้ใช้ฐานข้อมูล MongoDB
 
+ระบบมีไฟล์สำหรับใส่ข้อมูลตัวอย่าง (Dummy Data) เพื่อใช้ในการทดสอบระบบ โดยมีขั้นตอนดังนี้:
+1.ตรวจสอบว่า MongoDB Atlas สามารถเชื่อมต่อได้ หรือมี MongoDB ทำงานอยู่
+2.ตั้งค่าไฟล์ .env ในโฟลเดอร์ backend โดยอ้างอิงจากไฟล์ .env.example
+3.เปิด Terminal และเข้าไปที่โฟลเดอร์ backend
+4.รันคำสั่งต่อไปนี้เพื่อเพิ่มข้อมูลตัวอย่างลงในฐานข้อมูล
 
-
-
-
+```bash
+npm run seed
+```
+หลังจากรันคำสั่งนี้ ระบบจะสร้างผู้ใช้ตัวอย่างและข้อมูล Portfolio สำหรับการทดสอบระบบโดยอัตโนมัติ
+ข้อมูลทั้งหมดเป็นข้อมูลสมมติ (Dummy Data) ใช้เพื่อการศึกษาเท่านั้น และไม่มีข้อมูลส่วนบุคคลจริง
 
 **6. Test Credentials**
 
+หลังจากนำเข้าข้อมูลฐานข้อมูลเรียบร้อยแล้ว สามารถใช้บัญชีผู้ใช้ตัวอย่างต่อไปนี้ในการทดสอบระบบ:
 
+### Super Admin
 
+Email: super_admin@kmutt.ac.th
 
+Password: 123
 
+### Advisor Admin
 
+Email: admin_advisor@kmutt.ac.th
 
+Password: 123
+
+### Student
+
+Email: student@kmutt.ac.th
+
+Password: 123 
+
+### Recruiter
+
+Email: recruiter@company.com
+
+Password: 123
+
+หมายเหตุ: รหัสผ่านที่ระบุเป็นรหัสผ่านก่อนการเข้ารหัส
+ระบบมีการเข้ารหัสรหัสผ่านด้วย bcrypt ในฝั่ง backend
 
 **7. Project Status & Known Issues**
 
@@ -96,28 +126,9 @@ npm start
   - ระบบอนุมัติผู้ใช้โดย Super Admin
   - ระบบกำหนดสถานะและการมองเห็นของผลงาน (Public/Private)
 
-
 - Frontend และ Backend ได้รับการ deploy และสามารถใช้งานร่วมกันได้ตามปกติ
   
 *Known Issues*
 
  - ระบบยังไม่ได้มีการทดสอบในส่วนของ Non-Functional Testing อย่างเป็นทางการ  เช่น การทดสอบประสิทธิภาพ (Performance), ความสามารถในการรองรับผู้ใช้จำนวนมาก (Scalability) และความทนทานของระบบ (Reliability)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
